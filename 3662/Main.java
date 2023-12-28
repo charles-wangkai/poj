@@ -29,7 +29,10 @@ public class Main {
   static int solve(int N, int[] A, int[] B, int[] L, int K) {
     int result = -1;
     int lower = 0;
-    int upper = Arrays.stream(L).max().getAsInt();
+    int upper = Integer.MIN_VALUE;
+    for (int Li : L) {
+      upper = Math.max(upper, Li);
+    }
     while (lower <= upper) {
       int middle = (lower + upper) / 2;
       if (check(N, A, B, L, K, middle)) {
@@ -47,7 +50,7 @@ public class Main {
     @SuppressWarnings("unchecked")
     List<Integer>[] edgeLists = new List[N];
     for (int i = 0; i < edgeLists.length; ++i) {
-      edgeLists[i] = new ArrayList<>();
+      edgeLists[i] = new ArrayList<Integer>();
     }
     for (int i = 0; i < A.length; ++i) {
       edgeLists[A[i] - 1].add(i);
@@ -56,20 +59,20 @@ public class Main {
 
     int[] distances = new int[N];
     Arrays.fill(distances, Integer.MAX_VALUE);
-    Deque<Element> deque = new ArrayDeque<>();
+    Deque<Element> deque = new ArrayDeque<Element>();
     deque.offerFirst(new Element(0, 0));
     while (!deque.isEmpty()) {
       Element head = deque.pollFirst();
-      if (distances[head.node()] == Integer.MAX_VALUE) {
-        distances[head.node()] = head.distance();
+      if (distances[head.node] == Integer.MAX_VALUE) {
+        distances[head.node] = head.distance;
 
-        for (int edge : edgeLists[head.node()]) {
-          int other = (A[edge] - 1 == head.node()) ? (B[edge] - 1) : (A[edge] - 1);
+        for (int edge : edgeLists[head.node]) {
+          int other = (A[edge] - 1 == head.node) ? (B[edge] - 1) : (A[edge] - 1);
           if (distances[other] == Integer.MAX_VALUE) {
             if (L[edge] <= maxPaidLength) {
-              deque.offerFirst(new Element(other, distances[head.node()]));
+              deque.offerFirst(new Element(other, distances[head.node]));
             } else {
-              deque.offerLast(new Element(other, distances[head.node()] + 1));
+              deque.offerLast(new Element(other, distances[head.node] + 1));
             }
           }
         }
@@ -80,4 +83,12 @@ public class Main {
   }
 }
 
-record Element(int node, int distance) {}
+class Element {
+  int node;
+  int distance;
+
+  Element(int node, int distance) {
+    this.node = node;
+    this.distance = distance;
+  }
+}
