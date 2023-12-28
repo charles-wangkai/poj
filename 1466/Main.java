@@ -91,6 +91,6 @@ public class Main {
 
 class Vertex {
   Boolean leftOrRight;
-  List<Integer> adjs = new ArrayList<>();
+  List<Integer> adjs = new ArrayList<Integer>();
   int matching = -1;
 }
