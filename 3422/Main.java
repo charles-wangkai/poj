@@ -1,3 +1,5 @@
+// TLE on POJ. AC on Bailian: http://bailian.openjudge.cn/practice/3477
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
