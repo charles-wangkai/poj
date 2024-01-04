@@ -1,4 +1,4 @@
-// RE on POJ. AC on another OJ: https://www.acmicpc.net/source/55258540
+// RE on POJ. AC on Baekjoon OJ: https://www.acmicpc.net/source/55258540
 
 import java.util.Scanner;
 
