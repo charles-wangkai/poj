@@ -19,7 +19,7 @@ public class Main {
   }
 
   static int solve(int N) {
-    return mutiply(INITIAL_STATE, pow(TRANSITION, N))[0];
+    return multiply(INITIAL_STATE, pow(TRANSITION, N))[0];
   }
 
   static int addMod(int x, int y) {
@@ -30,7 +30,7 @@ public class Main {
     return x * y % MODULUS;
   }
 
-  static int[] mutiply(int[] v, int[][] m) {
+  static int[] multiply(int[] v, int[][] m) {
     int size = v.length;
 
     int[] result = new int[size];
