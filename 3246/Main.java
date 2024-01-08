@@ -1,4 +1,3 @@
-// TLE on POJ
 // https://www.hankcs.com/program/algorithm/poj-3246-game.html
 
 import java.io.BufferedReader;
@@ -10,9 +9,15 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 public class Main {
+  static final int LIMIT = 100000;
+
   public static void main(String[] args) throws Throwable {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
+    Point[] points = new Point[LIMIT + 1];
+    Point[] ps = new Point[LIMIT];
+
+    StringBuilder output = new StringBuilder();
     while (true) {
       StringTokenizer st = new StringTokenizer(br.readLine());
       int N = Integer.parseInt(st.nextToken());
@@ -20,38 +25,32 @@ public class Main {
         break;
       }
 
-      int[] xs = new int[N];
-      int[] ys = new int[N];
       for (int i = 0; i < N; ++i) {
         st = new StringTokenizer(br.readLine());
-        xs[i] = Integer.parseInt(st.nextToken());
-        ys[i] = Integer.parseInt(st.nextToken());
+        int x = Integer.parseInt(st.nextToken());
+        int y = Integer.parseInt(st.nextToken());
+        points[i] = new Point(x, y);
       }
 
-      System.out.println(String.format("%.2f", solve(xs, ys)));
+      output.append(String.format("%.2f", solve(points, ps, N))).append("\n");
     }
+    System.out.print(output);
   }
 
-  static double solve(int[] xs, int[] ys) {
-    Point[] points = new Point[xs.length];
-    for (int i = 0; i < points.length; ++i) {
-      points[i] = new Point(xs[i], ys[i]);
-    }
-
-    List<Point> convexHull = buildConvexHull(points);
+  static double solve(Point[] points, Point[] ps, int N) {
+    List<Point> convexHull = buildConvexHull(points, N);
 
     double result = Double.MAX_VALUE;
     for (Point removed : convexHull) {
-      Point[] ps = new Point[points.length - 1];
       int index = 0;
-      for (Point p : points) {
-        if (!p.equals(removed)) {
-          ps[index] = p;
+      for (int i = 0; i < N; ++i) {
+        if (!points[i].equals(removed)) {
+          ps[index] = points[i];
           ++index;
         }
       }
 
-      result = Math.min(result, computeArea(buildConvexHull(ps)));
+      result = Math.min(result, computeArea(buildConvexHull(ps, N - 1)));
     }
 
     return result;
@@ -69,27 +68,30 @@ public class Main {
     return Math.abs(sum / 2.0);
   }
 
-  static List<Point> buildConvexHull(Point[] points) {
+  static List<Point> buildConvexHull(Point[] points, int N) {
     int zIndex = 0;
-    for (int i = 1; i < points.length; ++i) {
+    for (int i = 1; i < N; ++i) {
       if (points[i].y < points[zIndex].y
           || (points[i].y == points[zIndex].y && points[i].x < points[zIndex].x)) {
         zIndex = i;
       }
     }
-    final Point z = points[zIndex];
+    Point z = points[zIndex];
 
     List<Point> sortedPoints = new ArrayList<Point>();
-    for (int i = 0; i < points.length; ++i) {
+    for (int i = 0; i < N; ++i) {
       if (i != zIndex) {
         sortedPoints.add(points[i]);
       }
+    }
+    for (Point p : sortedPoints) {
+      p.angle = computeAngle(z, p);
     }
     Collections.sort(
         sortedPoints,
         new Comparator<Point>() {
           public int compare(Point p1, Point p2) {
-            return Double.compare(computeAngle(z, p1), computeAngle(z, p2));
+            return Double.compare(p1.angle, p2.angle);
           }
         });
     sortedPoints.add(z);
@@ -142,6 +144,7 @@ public class Main {
 class Point {
   int x;
   int y;
+  double angle;
 
   Point(int x, int y) {
     this.x = x;
